@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Employee Salaries</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="panel-body">
+                <h2>Employees Salaries</h2>
+                <div class="flex-container">
+                    <input type="text" id="employeeId" size="5" class="form-control" />
+                    <input type="button" class="btn btn-primary btn-search" value="Search" onclick="getEmployee();" />
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table" id="employees">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Contract Type</th>
+                        <th scope="col">Role Id</th>
+                        <th scope="col">Role Name</th>
+                        <th scope="col">Role Description</th>
+                        <th scope="col">Salary</th>
+                        <th scope="col">Annual Salary</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeData">
+                    <tr></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script>
+        var uri = 'api/employee';
+
+        function formatItem(data) {
+            var row = $("<tr></tr>");
+            row.append($("<th scope='row'>" + data.Id + "</th>"));
+            row.append($("<td>" + data.Name + "</td>"));
+            row.append($("<td>" + data.ContractType + "</td>"));
+            row.append($("<td>" + data.RoleId + "</td>"));
+            row.append($("<td>" + data.RoleName + "</td>"));
+            row.append($("<td>" + data.RoleDescription + "</td>"));
+            row.append($("<td>$ " + Number(data.Salary).toLocaleString('en') + "</td>"));
+            row.append($("<td>$ " + Number(data.AnnualSalary).toLocaleString('en') + "</td>"));
+            return row;
+        }
+
+        function cleanTable() {
+            $("#employeeData").empty();
+        }
+
+        function addItemToTable(data) {
+            $('#employees').append(formatItem(data));
+        }
+
+        function getEmployee() {
+            var id = $('#employeeId').val();
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    cleanTable();
+                    if (id !== '') {
+                        addItemToTable(data);
+                    } else {
+                        $.each(data, function (key, item) {
+                            addItemToTable(item);
+                        });
+                    }
+                });
+        }
+
+        $(document).ready(function () {
+            getEmployee();
+        });
+    </script>
+</body>
+</html>
